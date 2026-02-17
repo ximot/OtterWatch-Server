@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Terminal Color Palette */
+  --color-terminal-black: #0a0a0a;
+  --color-terminal-dark: #0d1117;
+  --color-terminal-panel: #161b22;
+  --color-terminal-border: #30363d;
+  --color-terminal-text: #c9d1d9;
+  --color-terminal-dim: #6e7681;
+
+  /* Phosphor Green (P1 Monitor) */
+  --color-phosphor: #33ff33;
+  --color-phosphor-dim: #1a8c1a;
+  --color-phosphor-glow: #33ff3366;
+
+  /* Amber Alternative */
+  --color-amber: #ffb000;
+  --color-amber-dim: #996600;
+
+  /* Status Colors */
+  --color-ok: #33ff33;
+  --color-warn: #ffb000;
+  --color-error: #ff3333;
+  --color-info: #33ccff;
+
+  /* Fonts */
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Consolas', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-mono);
+  background: var(--color-terminal-black);
+  color: var(--color-terminal-text);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at top, var(--color-terminal-dark) 0%, var(--color-terminal-black) 70%);
+}
+
+/* CRT Scanline Effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 9999;
+  opacity: 0.3;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-terminal-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-terminal-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-phosphor-dim);
+}

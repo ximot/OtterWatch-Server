@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with TimescaleDB
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: otterwatch-db
+    environment:
+      POSTGRES_USER: otterwatch
+      POSTGRES_PASSWORD: otterwatch
+      POSTGRES_DB: otterwatch
+    volumes:
+      - otterwatch-db-data:/var/lib/postgresql/data
+      - ./container/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U otterwatch -d otterwatch"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # MQTT Broker (Mosquitto)
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: otterwatch-mqtt
+    volumes:
+      - ./container/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - otterwatch-mqtt-data:/mosquitto/data
+      - otterwatch-mqtt-log:/mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-t", "$$SYS/#", "-C", "1", "-i", "healthcheck", "-W", "3"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # OtterWatch Server
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: otterwatch-server
+    environment:
+      OTTERWATCH_DATABASE_URL: postgres://otterwatch:otterwatch@db:5432/otterwatch
+      OTTERWATCH_HTTP_LISTEN_ADDR: 0.0.0.0:8080
+      OTTERWATCH_MQTT_BROKER_ADDR: tcp://mqtt:1883
+      OTTERWATCH_MQTT_CLIENT_ID: otterwatch-server
+      OTTERWATCH_MQTT_TOPIC_PREFIX: otterwatch/metrics
+      OTTERWATCH_API_KEYS: ${OTTERWATCH_API_KEYS:-default-api-key-change-me}
+      OTTERWATCH_PUBLIC_URL: ${OTTERWATCH_PUBLIC_URL:-http://localhost:8080}
+      OTTERWATCH_UPDATES_DIR: /app/updates
+      RUST_LOG: ${RUST_LOG:-info}
+    volumes:
+      - otterwatch-updates:/app/updates
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  otterwatch-db-data:
+  otterwatch-mqtt-data:
+  otterwatch-mqtt-log:
+  otterwatch-updates:
+
+networks:
+  default:
+    name: otterwatch-network

@@ -1,0 +1,29 @@
+# OtterWatch Server Configuration
+# Copy to settings.toml and adjust as needed
+# Environment variables (OTTERWATCH_*) override these settings
+
+# HTTP API server settings
+http_listen_addr = "0.0.0.0:8080"
+
+# MQTT broker connection
+mqtt_broker_addr = "tcp://localhost:1883"
+mqtt_client_id = "otterwatch-server"
+mqtt_topic_prefix = "otterwatch/metrics"
+
+# Database connection (PostgreSQL/TimescaleDB)
+# Override with OTTERWATCH_DATABASE_URL env var
+database_url = "postgres://otterwatch:otterwatch@localhost:5432/otterwatch"
+
+# Agent API keys (comma-separated list of valid keys)
+# Override with OTTERWATCH_API_KEYS env var
+api_keys = "change-me-in-production"
+
+# Data retention (days)
+metrics_retention_days = 90
+
+# Agent binary updates directory
+updates_dir = "./updates"
+
+# Public URL for generating download links (required for agent updates)
+# Override with OTTERWATCH_PUBLIC_URL env var
+public_url = "http://localhost:8080"

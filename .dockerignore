@@ -1,0 +1,35 @@
+# Build artifacts
+target/
+dashboard/node_modules/
+dashboard/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Docker/Podman
+Dockerfile
+podman-compose.yml
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+!dashboard/README.md
+
+# Local config
+settings.toml
+.env
+
+# Logs
+*.log
+
+# Database files
+*.sqlite
+*.db

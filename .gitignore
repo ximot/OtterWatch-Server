@@ -1,0 +1,28 @@
+/target
+
+# Environment and secrets
+.env
+settings.toml
+
+# Logs
+*.log
+
+# Agent binaries (runtime data)
+/updates/
+
+# Node.js
+/dashboard/node_modules/
+/dashboard/dist/
+
+# IDE
+/.idea/
+*.iml
+
+# AI agent files
+CLAUDE.md
+/.claude/
+/.serena/
+
+# AI feature (not yet ready)
+/dashboard/src/components/AiPanel.tsx
+/migrations/20260112000000_add_ai_responses.sql
